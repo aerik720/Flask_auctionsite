@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{titel or "Auctions"}}</title>
+</head>
+<body>
+    
+    <ul>
+        {% for auction in auctions %}
+            <li>
+                <a href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">{{ auction.title }}</a>
+                <p>{{ auction.description }}</p>
+                <p>Ends at: {{ auction.end_at }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
