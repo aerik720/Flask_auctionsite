@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{titel or "Auctions"}}</title>
 </head>
-<body>
+<header>
     
+</header>
+<body>
+        {% for user in users %}
+            <p></p><a href="{{ url_for('auth_bp.login') }}">Log in</a></p>
+        {% endfor %}
+
+    
+      
     <ul>
         {% for auction in auctions %}
             <li>

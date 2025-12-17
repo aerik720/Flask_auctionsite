@@ -11,9 +11,18 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False, default='user')
 
+    def get_id(self):
+            """
+            Denna metod KRÄVS av Flask-Login.
+            Den returnerar användarens ID som en sträng för att hantera sessionen.
+            """
+            return str(self.id)#måste returnera en sträng
+
     def __repr__(self):
         return f"<User {self.username} ({self.role})>"
     
+    
+
 STARTDATA_USERS = [
     {'username': 'Anton', 'password': '1234', 'email': 'anton@gmail.com', 'role': 'admin'},
     {'username': 'Liam', 'password': '12345', 'email': 'liam@du.se', 'role': 'user'}

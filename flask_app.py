@@ -4,6 +4,7 @@ from blueprints.auctions import auctions_bp
 from models.auction import Auction
 from datetime import datetime, timedelta
 from models.user import User, makestartusers
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev"
@@ -34,6 +35,22 @@ with app.app_context():
     db.create_all()
     if_empty_auctiondb()
     makestartusers()
+
+login_manager = LoginManager()
+
+login_manager.init_app(app)
+
+login_manager.login_view = 'auth_bp.login'
+
+@login_manager.user_loader
+
+def load_user(user_id):
+
+    """Laddar en användare från databasen baserat på ID:t i sessionen."""
+
+    return User.query.get(int(user_id))
+
+
 
 
 if __name__ == '__main__':
