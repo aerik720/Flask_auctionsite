@@ -16,7 +16,7 @@ def login():
         password = request.form['password']
 
         # 1. AUTENTISERING: Hämta användaren via unikt användarnamn
-        user = user_repo.hamta_user_username(username=username)
+        user = user_repo.get_user_username(username=username)
 
         # Jämför: Kontrollera om användaren finns OCH om lösenordet matchar
         # OBS! I en riktig app ska lösenordsjämförelsen ske mot det HASHADE lösenordet.
@@ -29,7 +29,7 @@ def login():
             next_page = request.args.get('next')
             # B. PRIORITET: Omdirigera till den sida som användaren försökte nå (next_page).
             #    Om 'next' saknas, skicka till en neutral startsida ('index' är bäst).
-            redirect_url = next_page or url_for('index')
+            redirect_url = next_page or url_for('auctions_bp.auctions_list')
 
             flash(f'Inloggning lyckades! Välkommen tillbaka.', 'success')
             return redirect(redirect_url)

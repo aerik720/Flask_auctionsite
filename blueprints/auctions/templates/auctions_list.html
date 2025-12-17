@@ -1,29 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{titel or "Auctions"}}</title>
-</head>
-<header>
-    
-</header>
-<body>
-        {% for user in users %}
-            <p></p><a href="{{ url_for('auth_bp.login') }}">Log in</a></p>
-        {% endfor %}
+{% extends "base.html" %}
 
-    
-      
-    <ul>
-        {% for auction in auctions %}
-            <li>
-                <a href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">{{ auction.title }}</a>
-                <p>{{ auction.description }}</p>
-                <p>Ends at: {{ auction.end_at }}</p>
-            </li>
-        {% endfor %}
-    </ul>
+{% block title %}Auctions{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<h1>Auctions</h1>
+
+<ul>
+    {% for auction in auctions %}
+        <li>
+            <a href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
+                {{ auction.title }}
+            </a>
+            <p>{{ auction.description }}</p>
+            <p>Ends at: {{ auction.end_at }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

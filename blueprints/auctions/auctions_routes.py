@@ -31,7 +31,6 @@ def place_bid(auction_id):
 
     amount = int(request.form.get("amount"))
 
-    # enkel regel: måste vara > max(befintligt) och >= starting_bid
     top2 = bid_repo.get_top_2(auction_id)
     current_max = top2[0].amount if top2 else auction.starting_bid
 

@@ -1,11 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
     <h2>Log in</h2>
 <!--kolla base templaten för login och logga ut via menyn-->
 <form method="POST">
@@ -19,5 +15,4 @@
     </div>
     <button type="submit" class="btn btn-primary">Log in</button>
 </form>
-</body>
-</html>
+{% endblock %}
