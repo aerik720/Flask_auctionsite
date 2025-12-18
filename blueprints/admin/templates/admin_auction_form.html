@@ -1,7 +1,53 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% block title %}Admin - Auction{% endblock %}
-{% block content %}
-    <h2>Admin - Auction</h2>'
 
+{% block titel %}{{ titel }}{% endblock %}
+
+{% block content %}
+<section>
+    <h1 class="mb-4">{{ titel }}</h1>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title"
+                value="{{ auction.title if auction else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input type="text" class="form-control" id="category" name="category" value="{{ auction.category if auction else '' }}"
+                required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="starting_bid" class="form-label">Starting Bid</label>
+                <input type="text" class="form-control" id="starting_bid" name="starting_bid"
+                    value="{{ auction.starting_bid if auction else '' }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="end_at" class="form-label">Ends At</label>
+                <input type="datetime-local" class="form-control" id="end_at" name="end_at" value="{{ auction.end_at if auction else '' }}"
+                    required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="image_url" class="form-label">Image URL</label>
+                <input type="text" class="form-control" id="image_url" name="image_url" value="{{ auction.image_url if auction else '' }}"
+                    required placeholder="optional">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required>{{ auction.description if auction else '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            {{ 'Save Changes' if auction else 'Add auction' }}
+        </button>
+        <a href="{{ url_for('admin_bp.admin_auctions_list') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</section>
 {% endblock %}

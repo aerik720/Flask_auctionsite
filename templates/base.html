@@ -17,6 +17,10 @@
             {% else %}
             <a href="{{ url_for('auth_bp.login') }}">Log in</a>
             {% endif %}
+
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <a href="{{ url_for('admin_bp.admin_auctions_list') }}">Admin</a>
+            {% endif %}
         </nav>
     </header>
 

@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template
 from database import db
 from blueprints.auth import auth_bp
 from blueprints.auctions import auctions_bp
+from blueprints.admin import admin_bp
 from models.auction import Auction
 from datetime import datetime, timedelta
 from models.user import User, makestartusers
@@ -16,6 +17,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 app.register_blueprint(auctions_bp)
 app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(admin_bp, url_prefix='/admin')
 
 @app.route('/')
 def home():

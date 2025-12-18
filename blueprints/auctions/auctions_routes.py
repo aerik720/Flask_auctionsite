@@ -27,7 +27,10 @@ def auctions_detail(auction_id):
 @login_required
 def place_bid(auction_id):
     auction = auction_repo.get_auction_by_id(auction_id)
-    bidder_email = request.form.get("bidder_email")
+    if request.form.get("email_radio_option") == "false":
+        bidder_email = request.form.get("bidder_email")
+    else:
+        bidder_email = current_user.email
 
     amount = int(request.form.get("amount"))
 
@@ -35,10 +38,10 @@ def place_bid(auction_id):
     current_max = top2[0].amount if top2 else auction.starting_bid
 
     if amount <= current_max:
-        flash(f"Budet måste vara högre än nuvarande max ({current_max}).", "warning")
+        flash(f"Bid needs to be higher than current bid ({current_max}).", "warning")
         return redirect(url_for("auctions_bp.auctions_detail", auction_id=auction_id))
 
-    bid_repo.lagg_bud(auction_id, bidder_email, amount)
+    bid_repo.place_bid(auction_id, bidder_email, amount)
     
     return redirect(url_for("auctions_bp.auctions_detail", auction_id=auction_id))
 

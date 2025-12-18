@@ -4,23 +4,23 @@
 {% block content %}
 
 
-    <p><a href="{{ url_for('auctions_bp.auctions_list') }}">← tillbaka</a></p>
+    <p><a href="{{ url_for('auctions_bp.auctions_list') }}">← Go back</a></p>
 
     <h1>{{ auction.title }}</h1>
     <p>{{ auction.description }}</p>
-    <p><b>Kategori:</b> {{ auction.category }}</p>
-    <p><b>Startbud:</b> {{ auction.starting_bid }}</p>
-    <p><b>Nuvarande maxbud:</b> {{ current_max }}</p>
-    <p><b>Slutar:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
+    <p><b>Category:</b> {{ auction.category }}</p>
+    <p><b>Starting bid:</b> {{ auction.starting_bid }}</p>
+    <p><b>Current max bid:</b> {{ current_max }}</p>
+    <p><b>Ends at:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
 
-    <h2>Reaktioner</h2>
+    <h2>Reactions</h2>
   <p>👍 {{ likes }} | 👎 {{ dislikes }}</p>
   <form method="post" action="{{ url_for('auctions_bp.react', auction_id=auction.id) }}">
     <button name="kind" value="like">Like</button>
     <button name="kind" value="dislike">Dislike</button>
   </form>
 
-  <h2>Topp 2 bud</h2>
+  <h2>Top 2 bids</h2>
   <ol>
     {% for bid in top2 %}
       <li>{{ bid.bidder_email }} — {{ bid.amount }} kr — {{ bid.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
@@ -29,7 +29,7 @@
     {% endfor %}
   </ol>
 
-  <h2>Historik</h2>
+  <h2>Bidding history</h2>
   <ol>
     {% for b in history %}
       <li>{{ b.amount }} kr — {{ b.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
@@ -38,16 +38,23 @@
     {% endfor %}
   </ol>
 
+  
   <h2>Place a Bid</h2>
-
+  {% if current_user.is_authenticated %}
     <form method="post" action="{{ url_for('auctions_bp.place_bid', auction_id=auction.id) }}">
+        <input type="radio" name="email_radio_option" value="true" checked> Use my registered email ({{ current_user.email }})
+        <input type="radio" name="email_radio_option" value="false"> Use a different email
+        <br>
         <label for="bidder_email">Your Email:</label>
-        <input type="email" id="bidder_email" name="bidder_email" required>
+        <input type="email" id="bidder_email" name="bidder_email">
         <br>
         <label for="amount">Bid Amount (kr):</label>
         <input type="number" id="amount" name="amount" step="0.01" required>
         <br>
         <button type="submit">Place Bid</button>
     </form>
+  {% else %}
+    <p><a href="{{ url_for('auth_bp.login') }}">Logga in</a> för att lägga ett bud.</p>
+  {% endif %}
 
 {% endblock %}
