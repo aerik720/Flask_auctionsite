@@ -17,8 +17,8 @@
 
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <input type="text" class="form-control" id="category" name="category" value="{{ auction.category if auction else '' }}"
-                required>
+            <input type="text" class="form-control" id="category" name="category"
+                value="{{ auction.category if auction else '' }}" required>
         </div>
 
         <div class="row">
@@ -29,20 +29,38 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label for="end_at" class="form-label">Ends At</label>
-                <input type="datetime-local" class="form-control" id="end_at" name="end_at" value="{{ auction.end_at if auction else '' }}"
-                    required>
+                <input type="datetime-local" class="form-control" id="end_at" name="end_at"
+                    value="{{ auction.end_at if auction else '' }}" required>
             </div>
             <div class="col-md-4 mb-3">
                 <label for="image_url" class="form-label">Image URL</label>
-                <input type="text" class="form-control" id="image_url" name="image_url" value="{{ auction.image_url if auction else '' }}"
-                    required placeholder="optional">
+                <input type="text" class="form-control" id="image_url" name="image_url"
+                    value="{{ auction.image_url if auction else '' }}" required placeholder="optional">
             </div>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required>{{ auction.description if auction else '' }}</textarea>
+            <textarea class="form-control" id="description" name="description" rows="4"
+                required>{{ auction.description if auction else '' }}</textarea>
         </div>
+
+        <h2>Bidding history</h2>
+        <ol>
+            {% for bid in history %}
+            <li>{{ bid.amount }} kr — {{ bid.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
+             <form action="{{ url_for('admin_bp.admin_delete_bid', bid_id=bid.id) }}" method="POST"
+                class="d-inline">
+            <button type="submit" class="btn btn-sm btn-danger"
+            onclick="return confirm('Are you sure you want to delete this bid?');" aria-label="Delete bid for {{ auction.title }}">Delete bid</button>
+            </form>
+            {% else %}
+            <li>No bids yet.</li>
+           
+            {% endfor %}
+        </ol>
+        
+
 
         <button type="submit" class="btn btn-primary">
             {{ 'Save Changes' if auction else 'Add auction' }}

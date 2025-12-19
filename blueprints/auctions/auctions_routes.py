@@ -17,6 +17,7 @@ def auctions_detail(auction_id):
     top2 = bid_repo.get_top_2(auction_id)
     history = auction_repo.get_bidding_history(auction_id)
     current_max = top2[0].amount if top2 else auction.starting_bid
+    
 
     likes = reactions_repo.count(auction_id, kind='like')
     dislikes = reactions_repo.count(auction_id, kind='dislike')

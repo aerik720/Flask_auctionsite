@@ -4,6 +4,7 @@ from . import admin_bp
 from dbrepository.auction_repo import auction_repo
 from dbrepository.bid_repo import bid_repo
 from datetime import datetime
+from dbrepository.reactions_repo import reactions_repo
 
 def is_admin():
     return current_user.is_authenticated and current_user.role == 'admin'
@@ -51,6 +52,8 @@ def admin_auctions_list():
 @admin_bp.route('/edit/<int:auction_id>', methods=['GET', 'POST'])
 @login_required
 def admin_form(auction_id=None):
+
+    
     """
     Hanterar logiken för att lägga till (CREATE) eller redigera (UPDATE) en bostad.
     Båda operationerna använder samma formulär och funktion.
@@ -62,6 +65,7 @@ def admin_form(auction_id=None):
 
     auction_edit = None
     title = "Add new auction"
+    history = auction_repo.get_bidding_history(auction_id)
 
     # A. Förbered för Redigering (Om auction_id finns i URL:en)
     if auction_id:
@@ -104,6 +108,7 @@ def admin_form(auction_id=None):
         'admin_auction_form.html',
         auction=auction_edit,
         title=title
+        ,history=history
     )
 
 @admin_bp.route('/delete/<int:auction_id>', methods=['POST'])
@@ -123,3 +128,19 @@ def admin_delete_auction(auction_id):
     return redirect(url_for('admin_bp.admin_auctions_list'))
 
         
+@admin_bp.route('/delete_bid/<int:bid_id>', methods=['POST'])
+@login_required
+def admin_delete_bid(bid_id):
+    if not is_admin():
+        flash("Access denied.", "danger")
+        return redirect(url_for('auctions_bp.auctions_list'))
+
+    bid = bid_repo.get_bid_by_id(bid_id)
+    if bid:
+        bid_repo.delete_bid(bid_id)
+        flash(f'Bid for auction "{bid.auction_id}" has been deleted.', 'success')
+    else:
+        flash('Auction not found.', 'warning')
+
+    return redirect(url_for('admin_bp.admin_form', bid_id=bid.id))
+

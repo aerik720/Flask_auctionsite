@@ -9,5 +9,15 @@ class BidRepo:
         new_bid = Bid(auction_id=auction_id, bidder_email=bidder_email, amount=amount)
         db.session.add(new_bid)
         db.session.commit()
-    
+
+    def get_bid_by_id(self, bid_id):
+        return Bid.query.get_or_404(bid_id)
+
+    def delete_bid(self, bid_id):
+        bid = self.get_bid_by_id(bid_id)
+        if bid:
+            db.session.delete(bid)
+            db.session.commit()
+
 bid_repo = BidRepo()
+

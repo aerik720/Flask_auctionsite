@@ -26,7 +26,7 @@
                 <form action="{{ url_for('admin_bp.admin_delete_auction', auction_id=auction.id) }}" method="POST"
                     class="d-inline">
                     <button type="submit" class="btn btn-sm btn-danger"
-                        onclick="return confirm('Är du säker på att du vill radera {{ auction.title }}?');" aria-label="Radera auction {{ auction.title }}">Radera</button>
+                        onclick="return confirm('Är du säker på att du vill radera {{ auction.title }}?');" aria-label="Delete auction {{ auction.title }}">Delete</button>
                 </form>
         </li>
     {% endfor %}
