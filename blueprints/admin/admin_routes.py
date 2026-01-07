@@ -138,7 +138,7 @@ def admin_delete_bid(bid_id):
     bid = bid_repo.get_bid_by_id(bid_id)
     if bid:
         bid_repo.delete_bid(bid_id)
-        flash(f'Bid for auction "{bid.auction_id}" has been deleted.', 'success')
+        flash(f'Bid for this auction has been deleted.', 'success')
     else:
         flash('Auction not found.', 'warning')
 
