@@ -9,8 +9,8 @@
     <h1>{{ auction.title }}</h1>
     <p>{{ auction.description }}</p>
     <p><b>Category:</b> {{ auction.category }}</p>
-    <p><b>Starting bid:</b> {{ auction.starting_bid }}</p>
-    <p><b>Current max bid:</b> {{ current_max }}</p>
+    <p><b>Starting bid:</b> ${{ auction.starting_bid }}</p>
+    <p><b>Current max bid:</b> ${{ current_max }}</p>
     <p><b>Ends at:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
 
     <h2>Reactions</h2>
@@ -23,7 +23,7 @@
   <h2>Top 2 bids</h2>
   <ol>
     {% for bid in top2 %}
-      <li>{{ bid.bidder_email }} — {{ bid.amount }} kr — {{ bid.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
+      <li>{{ bid.bidder_email }} — ${{ bid.amount }} — {{ bid.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
     {% else %}
       <li>No bids yet.</li>
     {% endfor %}
@@ -48,7 +48,7 @@
         <label for="bidder_email">Your Email:</label>
         <input type="email" id="bidder_email" name="bidder_email">
         <br>
-        <label for="amount">Bid Amount (kr):</label>
+        <label for="amount">Bid Amount:</label>
         <input type="number" id="amount" name="amount" step="0.01" required>
         <br>
         <button type="submit">Place Bid</button>

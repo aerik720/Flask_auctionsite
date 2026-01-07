@@ -9,6 +9,7 @@ from datetime import datetime
 @auctions_bp.route('/')
 def auctions_list():
     keyword = request.args.get("q", "").strip()
+    category_keyword = request.args.get("category", "").strip()
 
     def to_float(value):
         try:
@@ -28,6 +29,7 @@ def auctions_list():
 
     auctions = auction_repo.search(
         keyword=keyword or None,
+        category_keyword=category_keyword or None,
         min_price=min_price,
         max_price=max_price,
         ends_before=ends_before
@@ -38,6 +40,7 @@ def auctions_list():
         auctions=auctions,
         filters={
             "q": keyword,
+            "category": category_keyword,
             "min_price": request.args.get("min_price", ""),
             "max_price": request.args.get("max_price", ""),
             "ends_before": request.args.get("ends_before", "")

@@ -9,26 +9,28 @@
 <form method="get">
     <input type="text"
            name="q"
-           placeholder="Sök efter auktion"
+           placeholder="Search auctions"
            value="{{ filters.q }}">
+
+    <input type="text" name="category" placeholder="Search category" value="{{ filters.category }}">
 
     <input type="number"
            name="min_price"
-           placeholder="Minpris"
+           placeholder="Min price"
            value="{{ filters.min_price }}">
 
     <input type="number"
            name="max_price"
-           placeholder="Maxpris"
+           placeholder="Max price"
            value="{{ filters.max_price }}">
 
-    <label>Slutar före:</label>
+    <label>Ends before:</label>
     <input type="datetime-local"
            name="ends_before"
            value="{{ filters.ends_before }}">
 
-    <button type="submit">Sök</button>
-    <a href="{{ url_for('auctions_bp.auctions_list') }}">Rensa</a>
+    <button type="submit">Search</button>
+    <a href="{{ url_for('auctions_bp.auctions_list') }}">Clear</a>
 </form>
 
 
@@ -43,6 +45,7 @@
             <img src="{{ auction.image_url }}" style="max-width:200px; max-height:200px;">
             {% endif %}
             <p>{{ auction.description }}</p>
+            <p>Price: ${{ auction.starting_bid }}</p>
             <p>Ends at: {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
         </li>
     {% endfor %}
