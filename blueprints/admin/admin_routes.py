@@ -134,9 +134,13 @@ def admin_delete_bid(bid_id):
     if not is_admin():
         flash("Access denied.", "danger")
         return redirect(url_for('auctions_bp.auctions_list'))
-    bid = bid_repo.get_bid_by_id(bid_id)
-    
-    bid_repo.delete_bid(bid_id)
-    flash(f'Bid for this auction has been deleted.', 'success')
 
-    return redirect(url_for('admin_bp.admin_form', auction_id=bid.auction_id))
+    bid = bid_repo.get_bid_by_id(bid_id)
+    if bid:
+        bid_repo.delete_bid(bid_id)
+        flash(f'Bid for this auction has been deleted.', 'success')
+    else:
+        flash('Auction not found.', 'warning')
+
+    return redirect(url_for('admin_bp.admin_form', bid_id=bid.id))
+
