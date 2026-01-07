@@ -62,15 +62,15 @@ def admin_form(auction_id=None):
     # Variabler för formuläret
     auction_edit = None
     title = "Add new auction"
-    history = auction_repo.get_bidding_history(auction_id) if auction_id else []
-
+    # Tomt lista för budhistorik
+    history = []
     # Om det är en redigering (Auction ID finns), hämta objektet
     if auction_id:
         # Hämta auktionen för redigering
         auction_edit = auction_repo.get_auction_by_id(auction_id)
         # Ändra titeln för redigeringsläge
         title = f"Edit: {auction_edit.title}"
-
+        history = auction_repo.get_bidding_history(auction_id)
         # Hämta likes och dislikes för auktionen
         likes = reactions_repo.count(auction_id, "like")
         dislikes = reactions_repo.count(auction_id, "dislike")
@@ -115,8 +115,10 @@ def admin_form(auction_id=None):
     "admin_auction_form.html",
     auction=auction_edit,
     title=title,
+    history=history,
     likes=likes,
     dislikes=dislikes
+    
 )
 
 # Rutter likes uppåt
@@ -201,6 +203,8 @@ def admin_delete_bid(bid_id):
         return redirect(url_for('auctions_bp.auctions_list'))
     # Hämta budet baserat på ID
     bid = bid_repo.get_bid_by_id(bid_id)
+
+    auction_id = bid.auction_id
     if bid:
         # Ta bort budet
         bid_repo.delete_bid(bid_id)
@@ -208,5 +212,5 @@ def admin_delete_bid(bid_id):
     else:
         flash('Auction not found.', 'warning')
     # Omdirigera tillbaka till admin formuläret för den auktionen
-    return redirect(url_for('admin_bp.admin_form', bid_id=bid.id))
+    return redirect(url_for('admin_bp.admin_form', auction_id=auction_id))
 

@@ -1,44 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Auctions{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>{% block title %}Auctions{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
+  <!-- Navigation -->
+  <header>
+    <nav>
+      <a href="{{ url_for('auctions_bp.auctions_list') }}">Home</a>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('auth_bp.logout') }}">Log out</a>
+      {% else %}
+      <a href="{{ url_for('auth_bp.login') }}">Log in</a>
+      {% endif %}
 
-    <!-- Navigation -->
-    <header>
-        <nav>
-            <a href="{{ url_for('auctions_bp.auctions_list') }}">Home</a>
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('auth_bp.logout') }}">Log out</a>
-            {% else %}
-            <a href="{{ url_for('auth_bp.login') }}">Log in</a>
-            {% endif %}
+      {% if current_user.is_authenticated and current_user.role == 'admin' %}
+      <a href="{{ url_for('admin_bp.admin_auctions_list') }}">Admin</a>
+      {% endif %}
+    </nav>
+  </header>
 
-            {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                <a href="{{ url_for('admin_bp.admin_auctions_list') }}">Admin</a>
-            {% endif %}
-        </nav>
-    </header>
-
+  <main>
     <!-- Flash meddelanden -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
     <div class="flash-wrapper">
-      {% for category, message in messages %}
-        <div class="flash flash-{{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="flash {{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
 
     <!-- Innehåll för varje sida -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+
+    {% block content %}{% endblock %}
+  </main>
 
 </body>
+
 </html>
