@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+# Skapar en Blueprint för autentisering
 auth_bp = Blueprint(
     'auth_bp',
     __name__,

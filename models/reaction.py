@@ -1,12 +1,13 @@
 from database import db
 
+# Modell för reaktioner (like/dislike) på auktioner
 class Reaction(db.Model):
     __tablename__ = 'reactions'
 
+    # Kolumner i tabellen
     id = db.Column(db.Integer, primary_key=True)
-    
     auction_id = db.Column(db.Integer, db.ForeignKey('auctions.id'), nullable=False)
     kind = db.Column(db.String(10), nullable=False) # Like eller dislike
-    amount = db.Column(db.Integer, nullable=False, default=1)
+    amount = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 

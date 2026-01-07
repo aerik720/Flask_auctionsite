@@ -6,17 +6,15 @@ from dbrepository.bid_repo import bid_repo
 from datetime import datetime
 from dbrepository.reactions_repo import reactions_repo
 
+# Kontrollera om nuvarande användare är admin
 def is_admin():
     return current_user.is_authenticated and current_user.role == 'admin'
 
+# Validera formulärdata
 def validate_form(form_data):
-    """
-    Hanterar validering, rensning och typkonvertering av formulärdata.
-   
-    Returns: Validerad data (dict), eller None om något misslyckas.
-    """
+    
     try:
-        # 1. Hämta och konvertera data till rätt Python-typer
+        # Hämta och rensa formulärdata
         data = {
             'title': form_data.get('title', '').strip(),
             'description': form_data.get('description', '').strip(),
@@ -26,55 +24,65 @@ def validate_form(form_data):
             'image_url': form_data.get('image_url', '').strip()
         }
 
-        # 2. Enkel Affärsvalidering (kontrollera att data är giltig)
+        # Kontrollera att nödvändiga fält är rätt ifyllda
         if not data['title'] or not data['description'] or not data['category'] or not data['starting_bid'] or not data['end_at']:
             return None # Kräver åtminstone ett av dessa fält ifyllda
-        # Lägg till fler valideringar här, t.ex. pris är ett nummer etc.
 
         return data
 
     except (KeyError, ValueError):
-        # Fångar fel om int() konverteringen misslyckas (om t.ex. 'rum' inte var ett nummer)
+        # Fångar fel vid konvertering av data
         return None
 
+# Rutt för att visa alla auktioner i adminpanelen
 @admin_bp.route('/admin/auctions')
-@login_required
+@login_required # Ingen åtkomst utan inloggnings
+# Visa alla auktioner i adminpanelen
 def admin_auctions_list():
+    # Säkerhetskontroll att användaren är admin
     if not is_admin():
         flash("Access denied.", "danger")
         return redirect(url_for('auctions_bp.auctions_list'))
 
+    # Hämta alla auktioner
     auctions = auction_repo.get_all_auctions()
     return render_template('admin_auctions_list.html', auctions=auctions)
 
-
+# Rutt för att lägga till eller redigera en auktion
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @admin_bp.route('/edit/<int:auction_id>', methods=['GET', 'POST'])
 @login_required
 def admin_form(auction_id=None):
 
-    
-    """
-    Hanterar logiken för att lägga till (CREATE) eller redigera (UPDATE) en bostad.
-    Båda operationerna använder samma formulär och funktion.
-    """
-    # Steg 1: Säkerhetskontroll
+    # Säkerhetskontroll
     if not is_admin():
         flash('Access denied: You must be an administrator.', 'danger')
         return redirect(url_for('auctions_bp.auctions_list'))
 
+    # Variabler för formuläret
     auction_edit = None
     title = "Add new auction"
-    history = auction_repo.get_bidding_history(auction_id)
+    history = auction_repo.get_bidding_history(auction_id) if auction_id else []
 
-    # A. Förbered för Redigering (Om auction_id finns i URL:en)
+    # Om det är en redigering (Auction ID finns), hämta objektet
     if auction_id:
-        # Använd den inbyggda 404-kontrollen i Repository-lagret
+        # Hämta auktionen för redigering
         auction_edit = auction_repo.get_auction_by_id(auction_id)
+        # Ändra titeln för redigeringsläge
         title = f"Edit: {auction_edit.title}"
+
+        # Hämta likes och dislikes för auktionen
+        likes = reactions_repo.count(auction_id, "like")
+        dislikes = reactions_repo.count(auction_id, "dislike")
+    else:
+        # Ny auktion, sätt likes och dislikes till 0
+        likes = 0
+        dislikes = 0
+
    
-    # B. POST-förfrågan (Formulär inskickat)
+    # Om det är en POST-förfrågan
     if request.method == 'POST':
+        # Hämta och validera formulärdata
         form_data = validate_form(request.form)
 
         if form_data is None:
@@ -82,14 +90,14 @@ def admin_form(auction_id=None):
             flash('Wrong data type or missing fields. Please check your input.', 'warning')
             # Återgå till formuläret utan redirect, så att felmeddelandet visas.            
         else:
-            # Validering lyckades: Dags att spara till DB
+            # Om validering lyckades
             if auction_id:
-                # UPDATE: Anropa Repository-uppdatering
+                # Uppdatera befintlig auktion med Repository
                 auction_repo.update(auction_id, form_data)
 
                 flash(f'Auction "{form_data["title"]}" has been updated!', 'success')
             else:
-                # CREATE: Anropa Repository för att skapa ny
+                # Annars skapa ny auktion med Repository med formulärdata
                 new_auction = auction_repo.create_auction(
                     title=form_data['title'],
                     description=form_data['description'],
@@ -99,26 +107,82 @@ def admin_form(auction_id=None):
                     image_url=form_data['image_url'] if form_data['image_url'] else None)
                 
                 flash(f'New auction "{new_auction.title}" has been added!', 'success')
-            # PRG-mönstret: Omdirigera till listan efter POST
-            return redirect(url_for('admin_bp.admin_auctions_list')) # behövs inget blueprint objekt före punkten (admin_bp.xxx) då den letar efter funktionen i den Blueprint du just nu befinner dig i.
+            
+            # Omdirigera tillbaka till admin auktion listan efter lyckad skapande eller uppdatering
+            return redirect(url_for('admin_bp.admin_auctions_list'))
 
-    # C. GET-förfrågan (Visa formulär)
-    # Skickar objektet för att fylla i formuläret i redigeringsläge, annars skickas None
     return render_template(
-        'admin_auction_form.html',
-        auction=auction_edit,
-        title=title
-        ,history=history
-    )
+    "admin_auction_form.html",
+    auction=auction_edit,
+    title=title,
+    likes=likes,
+    dislikes=dislikes
+)
 
+# Rutter likes uppåt
+@admin_bp.route("/edit/<int:auction_id>/likes/plus", methods=["POST"])
+@login_required # Kräver inloggning
+def admin_likes_plus(auction_id):
+    # Säkerhetskontroll
+    if not is_admin():
+        flash("Access denied.", "danger")
+        return redirect(url_for("auctions_bp.auctions_list"))
+
+    # Öka antalet likes med 1
+    reactions_repo.add(auction_id, "like")
+    return redirect(url_for("admin_bp.admin_form", auction_id=auction_id))
+
+# Rutter likes nedåt
+@admin_bp.route("/edit/<int:auction_id>/likes/minus", methods=["POST"])
+@login_required # Kräver inloggning
+def admin_likes_minus(auction_id):
+    # Säkerhetskontroll
+    if not is_admin():
+        flash("Access denied.", "danger")
+        return redirect(url_for("auctions_bp.auctions_list"))
+    
+    # Minska antalet likes med 1
+    reactions_repo.remove(auction_id, "like")
+    return redirect(url_for("admin_bp.admin_form", auction_id=auction_id))
+
+# Rutt dislikes uppåt
+@admin_bp.route("/edit/<int:auction_id>/dislikes/plus", methods=["POST"])
+@login_required # Kräver inloggning
+def admin_dislikes_plus(auction_id):
+    # Säkerhetskontroll
+    if not is_admin():
+        flash("Access denied.", "danger")
+        return redirect(url_for("auctions_bp.auctions_list"))
+
+    # Öka antalet dislikes med 1
+    reactions_repo.add(auction_id, "dislike")
+    return redirect(url_for("admin_bp.admin_form", auction_id=auction_id))
+
+# Rutt dislikes nedåt
+@admin_bp.route("/edit/<int:auction_id>/dislikes/minus", methods=["POST"])
+@login_required # Kräver inloggning
+def admin_dislikes_minus(auction_id):
+    # Säkerhetskontroll
+    if not is_admin():
+        flash("Access denied.", "danger")
+        return redirect(url_for("auctions_bp.admin_form", auction_id=auction_id))
+    
+    # Minska antalet dislikes med 1
+    reactions_repo.remove(auction_id, "dislike")
+    return redirect(url_for("admin_bp.admin_form", auction_id=auction_id))
+
+# Rutt för att ta bort en auktion
 @admin_bp.route('/delete/<int:auction_id>', methods=['POST'])
-@login_required
+@login_required # Kräver inloggning
 def admin_delete_auction(auction_id):
+    # Säkerhetskontroll
     if not is_admin():
         flash("Access denied.", "danger")
         return redirect(url_for('auctions_bp.auctions_list'))
 
+    # Hämta auktionen baserat på ID
     auction = auction_repo.get_auction_by_id(auction_id)
+    # Om auktionen finns, ta bort den
     if auction:
         auction_repo.delete(auction_id)
         flash(f'Auction "{auction.title}" has been deleted.', 'success')
@@ -127,20 +191,22 @@ def admin_delete_auction(auction_id):
 
     return redirect(url_for('admin_bp.admin_auctions_list'))
 
-        
+# Rutt för att ta bort ett bud på en auktion
 @admin_bp.route('/delete_bid/<int:bid_id>', methods=['POST'])
-@login_required
+@login_required # Kräver inloggning
 def admin_delete_bid(bid_id):
+    # Säkerhetskontroll
     if not is_admin():
         flash("Access denied.", "danger")
         return redirect(url_for('auctions_bp.auctions_list'))
-
+    # Hämta budet baserat på ID
     bid = bid_repo.get_bid_by_id(bid_id)
     if bid:
+        # Ta bort budet
         bid_repo.delete_bid(bid_id)
         flash(f'Bid for this auction has been deleted.', 'success')
     else:
         flash('Auction not found.', 'warning')
-
+    # Omdirigera tillbaka till admin formuläret för den auktionen
     return redirect(url_for('admin_bp.admin_form', bid_id=bid.id))
 

@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+# Skapar en Blueprint för admin
 admin_bp = Blueprint(
     'admin_bp',
     __name__,

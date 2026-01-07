@@ -78,7 +78,7 @@ class AuctionRepo:
             cat_like = f"%{category_keyword.strip()}%"
             query = query.filter(Auction.category.ilike(cat_like))
 
-        # Prisfilter (startpris)
+        # Prisfilter
         if min_price is not None:
             query = query.filter(Auction.starting_bid >= min_price)
 
@@ -92,5 +92,5 @@ class AuctionRepo:
         # Sortera så att auktioner som slutar snart visas först
         return query.order_by(Auction.end_at.asc()).all()
 
-
+# Skapar en instans av AuctionRepo
 auction_repo = AuctionRepo()
