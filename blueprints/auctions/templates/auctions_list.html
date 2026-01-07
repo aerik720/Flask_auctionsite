@@ -28,15 +28,15 @@
            name="ends_before"
            value="{{ filters.ends_before }}">
 
-    <button type="submit">Search</button>
-    <a href="{{ url_for('auctions_bp.auctions_list') }}">Clear</a>
+    <button class="button" type="submit">Search</button>
+    <a class="button-secondary" href="{{ url_for('auctions_bp.auctions_list') }}">Clear</a>
 </form>
 
 
 <ul>
     {% for auction in auctions %}
         <li><p>
-            <a href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
+            <a class="title-link" href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
                 {{ auction.title }}
             </a>
             </p>
@@ -44,8 +44,8 @@
             <img src="{{ auction.image_url }}" style="max-width:200px; max-height:200px;">
             {% endif %}
             <p>{{ auction.description }}</p>
-            <p>Price: ${{ auction.starting_bid }}</p>
-            <p>Ends at: {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
+            <p><b>Starting bid:</b> ${{ auction.starting_bid }}</p>
+            <p><b>Ends at:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
         </li>
     {% endfor %}
 </ul>

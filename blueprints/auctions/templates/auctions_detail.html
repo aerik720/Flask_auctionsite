@@ -3,7 +3,7 @@
 {% block content %}
 
 
-    <p><a href="{{ url_for('auctions_bp.auctions_list') }}">← Go back</a></p>
+    <p><a class="non-decoration" href="{{ url_for('auctions_bp.auctions_list') }}">← Go back</a></p>
 
     <h1>{{ auction.title }}</h1>
     <p>{{ auction.description }}</p>
@@ -15,8 +15,8 @@
     <h2>Reactions</h2>
   <p>👍 {{ likes }} | 👎 {{ dislikes }}</p>
   <form method="post" action="{{ url_for('auctions_bp.react', auction_id=auction.id) }}">
-    <button name="kind" value="like">Like</button>
-    <button name="kind" value="dislike">Dislike</button>
+    <button class="button" name="kind" value="like">Like</button>
+    <button class="button" name="kind" value="dislike">Dislike</button>
   </form>
 
   <h2>Top 2 bids</h2>
@@ -31,7 +31,7 @@
   <h2>Bidding history</h2>
   <ol>
     {% for b in history %}
-      <li>{{ b.amount }} kr — {{ b.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
+      <li>${{ b.amount }} — {{ b.created_at.strftime("%d %b %Y kl %H:%M") }}</li>
     {% else %}
       <li>No bids yet.</li>
     {% endfor %}
@@ -50,10 +50,10 @@
         <label for="amount">Bid Amount:</label>
         <input type="number" id="amount" name="amount" step="0.01" required>
         <br>
-        <button type="submit">Place Bid</button>
+        <button class="button" type="submit">Place Bid</button>
     </form>
   {% else %}
-    <p><a href="{{ url_for('auth_bp.login') }}">Logga in</a> för att lägga ett bud.</p>
+    <p><a class="non-decoration button-secondary" href="{{ url_for('auth_bp.login') }}">Logga in</a> för att lägga ett bud.</p>
   {% endif %}
 
 {% endblock %}

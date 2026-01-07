@@ -3,13 +3,15 @@
 {% block title %}Auctions{% endblock %}
 
 {% block content %}
-<p ><a href="{{ url_for('admin_bp.admin_form') }}">Add new auction</a></p>
 
 <h1>Auctions</h1>
+
+<p class="mb1"><a class="button non-decoration" href="{{ url_for('admin_bp.admin_form') }}">Add new auction</a></p>
+
 <ul>
     {% for auction in auctions %}
         <li><p>
-            <a href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
+            <a class="title-link" href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
                 {{ auction.title }}
             </a>
             </p>
@@ -18,13 +20,13 @@
             {% endif %}
             
             <p>{{ auction.description }}</p>
-            <p>Ends at: {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
+            <p><b>Ends at:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
             <a href="{{ url_for('admin_bp.admin_form', auction_id=auction.id) }}"
-                    class="btn btn-sm btn-primary" aria-label="Edit auction">Edit</a>
+                    class="edit-button" aria-label="Edit auction">Edit</a>
 
                 <form action="{{ url_for('admin_bp.admin_delete_auction', auction_id=auction.id) }}" method="POST"
                     class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-danger"
+                    <button type="submit" class="button small danger"
                         onclick="return confirm('Är du säker på att du vill radera {{ auction.title }}?');" aria-label="Delete auction {{ auction.title }}">Delete</button>
                 </form>
             
