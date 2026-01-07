@@ -3,12 +3,46 @@ from dbrepository.bid_repo import bid_repo
 from dbrepository.reactions_repo import reactions_repo
 from . import auctions_bp, auction_repo
 from flask_login import login_required, current_user
+from datetime import datetime
 
 
 @auctions_bp.route('/')
 def auctions_list():
-    auctions = auction_repo.get_all_auctions()
-    return render_template('auctions_list.html', auctions=auctions)
+    keyword = request.args.get("q", "").strip()
+
+    def to_float(value):
+        try:
+            return float(value) if value else None
+        except ValueError:
+            return None
+
+    def to_datetime(value):
+        try:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M") if value else None
+        except ValueError:
+            return None
+
+    min_price = to_float(request.args.get("min_price"))
+    max_price = to_float(request.args.get("max_price"))
+    ends_before = to_datetime(request.args.get("ends_before"))
+
+    auctions = auction_repo.search(
+        keyword=keyword or None,
+        min_price=min_price,
+        max_price=max_price,
+        ends_before=ends_before
+    )
+
+    return render_template(
+        "auctions_list.html",
+        auctions=auctions,
+        filters={
+            "q": keyword,
+            "min_price": request.args.get("min_price", ""),
+            "max_price": request.args.get("max_price", ""),
+            "ends_before": request.args.get("ends_before", "")
+        }
+    )
 
 @auctions_bp.route('/<int:auction_id>')
 def auctions_detail(auction_id):

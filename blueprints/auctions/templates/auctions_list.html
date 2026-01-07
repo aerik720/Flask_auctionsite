@@ -6,6 +6,32 @@
 {% block content %}
 <h1>Auctions</h1>
 
+<form method="get">
+    <input type="text"
+           name="q"
+           placeholder="Sök efter auktion"
+           value="{{ filters.q }}">
+
+    <input type="number"
+           name="min_price"
+           placeholder="Minpris"
+           value="{{ filters.min_price }}">
+
+    <input type="number"
+           name="max_price"
+           placeholder="Maxpris"
+           value="{{ filters.max_price }}">
+
+    <label>Slutar före:</label>
+    <input type="datetime-local"
+           name="ends_before"
+           value="{{ filters.ends_before }}">
+
+    <button type="submit">Sök</button>
+    <a href="{{ url_for('auctions_bp.auctions_list') }}">Rensa</a>
+</form>
+
+
 <ul>
     {% for auction in auctions %}
         <li><p>

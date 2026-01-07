@@ -67,4 +67,34 @@ class AuctionRepo:
 
         return False
     
+    def search(self, keyword=None, min_price=None, max_price=None, ends_before=None):
+        """
+        Söker och filtrerar auktioner baserat på användarens val.
+        - keyword: sökord i titel
+        - min_price / max_price: prisintervall (startpris)
+        - ends_before: visa auktioner som slutar före ett visst datum
+        """
+
+        query = Auction.query
+
+        # Sök på titel
+        if keyword:
+            search = f"%{keyword.strip()}%"
+            query = query.filter(Auction.title.ilike(search))
+
+        # Prisfilter (startpris)
+        if min_price is not None:
+            query = query.filter(Auction.starting_bid >= min_price)
+
+        if max_price is not None:
+            query = query.filter(Auction.starting_bid <= max_price)
+
+        # Sluttid
+        if ends_before is not None:
+            query = query.filter(Auction.end_at <= ends_before)
+
+        # Sortera så att auktioner som slutar snart visas först
+        return query.order_by(Auction.end_at.asc()).all()
+
+
 auction_repo = AuctionRepo()
