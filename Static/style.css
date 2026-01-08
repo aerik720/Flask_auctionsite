@@ -111,16 +111,9 @@ textarea {
   font-size: 0.8rem;
 }
 
-.edit-button {
-  background: #065f46;
-  text-decoration: none;
-  color: white;
-  border: none;
+.button-secondary.small {
   padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
   font-size: 0.8rem;
-  
 }
 
 .button-secondary {
