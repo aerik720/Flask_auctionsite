@@ -52,6 +52,7 @@
         <a href="{{ url_for('admin_bp.admin_auctions_list') }}" class="button-secondary">Cancel</a>
     </form>
     <!-- Bud historik sektion -->
+     {% if auction %}
     <h2>Bidding history</h2>
     <ol>
         {% for bid in history %}
@@ -67,6 +68,7 @@
         <li>No bids yet.</li>
 
         {% endfor %}
+        {% endif %}
     </ol>
 
     {% if auction %}
