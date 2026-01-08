@@ -8,7 +8,7 @@
 
 <p class="mb1"><a class="button non-decoration" href="{{ url_for('admin_bp.admin_form') }}">Add new auction</a></p>
 
-<ul>
+<ul class="grid-container">
     {% for auction in auctions %}
         <li><p>
             <a class="title-link" href="{{ url_for('auctions_bp.auctions_detail', auction_id=auction.id) }}">
@@ -16,7 +16,7 @@
             </a>
             </p>
             {% if auction.image_url %}
-            <img src="{{ auction.image_url }}" style="max-width:200px; max-height:200px;">
+            <img src="{{ auction.image_url }}" class="card-img">
             {% endif %}
             
             <p>{{ auction.description }}</p>
