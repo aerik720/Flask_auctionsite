@@ -144,6 +144,12 @@ textarea {
   color: #2563eb;
 }
 
+.bid-email {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
 .flash-wrapper {
   margin-bottom: 1.2rem;
 }
