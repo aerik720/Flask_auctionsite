@@ -1,10 +1,11 @@
+<!-- Auctions List Template -->
 {% extends "base.html" %}
 
 {% block title %}Auctions{% endblock %}
 
 {% block content %}
 <h1>Auctions</h1>
-
+<!-- Sökfunktions form för filtrering-->
 <form method="get">
     <input type="text"
            name="q"
@@ -27,12 +28,12 @@
     <input type="datetime-local"
            name="ends_before"
            value="{{ filters.ends_before }}">
-
+    <!-- sök knapp -->
     <button class="button" type="submit">Search</button>
     <a class="button-secondary" href="{{ url_for('auctions_bp.auctions_list') }}">Clear</a>
 </form>
 
-
+<!-- Lista för auktionerna -->
 <ul class="grid-container">
     {% for auction in auctions %}
         <li><p>

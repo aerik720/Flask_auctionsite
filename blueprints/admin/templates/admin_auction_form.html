@@ -1,3 +1,4 @@
+<!-- Admin Auction Form Template -->
 {% extends "base.html" %}
 
 {% block title %}{{ title }}{% endblock %}
@@ -5,7 +6,7 @@
 {% block content %}
 <section>
     <h1>{{ title }}</h1>
-
+    <!-- Form för att add eller edit en auktion -->
     <form method="POST">
 
         <div>
@@ -43,11 +44,14 @@
             <textarea id="description" placeholder="Describe your item" name="description" rows="4"
                 required>{{ auction.description if auction else '' }}</textarea>
         </div>
+        <!-- Submit knapp -->
         <button type="submit" class="button">
             {{ 'Save Changes' if auction else 'Add auction' }}
         </button>
+        <!-- Cancel knapp -->
         <a href="{{ url_for('admin_bp.admin_auctions_list') }}" class="button-secondary">Cancel</a>
     </form>
+    <!-- Bud historik sektion -->
     <h2>Bidding history</h2>
     <ol>
         {% for bid in history %}
@@ -66,16 +70,19 @@
     </ol>
 
     {% if auction %}
+    <!-- Reactions sektion -->
     <h3>Reactions</h3>
 
     <p>
         <b>Likes:</b> {{ likes }}
     <form method="post" action="{{ url_for('admin_bp.admin_likes_plus', auction_id=auction.id) }}"
         style="display:inline;">
+        <!-- Knapp för att öka likes -->
         <button class="button" type="submit">+</button>
     </form>
     <form method="post" action="{{ url_for('admin_bp.admin_likes_minus', auction_id=auction.id) }}"
         style="display:inline;">
+        <!-- Knapp för att minska likes -->
         <button class="button" type="submit">-</button>
     </form>
     </p>
@@ -84,10 +91,12 @@
         <b>Dislikes:</b> {{ dislikes }}
     <form method="post" action="{{ url_for('admin_bp.admin_dislikes_plus', auction_id=auction.id) }}"
         style="display:inline;">
+        <!-- Knapp för att öka dislikes -->
         <button class="button" type="submit">+</button>
     </form>
     <form method="post" action="{{ url_for('admin_bp.admin_dislikes_minus', auction_id=auction.id) }}"
         style="display:inline;">
+        <!-- Knapp för att minska dislikes -->
         <button class="button" type="submit">-</button>
     </form>
     </p>
