@@ -20,6 +20,7 @@
             {% endif %}
             
             <p>{{ auction.description }}</p>
+            <p><b>Starting bid:</b> ${{ auction.starting_bid }}</p>
             <p><b>Ends at:</b> {{ auction.end_at.strftime("%d %b %Y kl %H:%M") }}</p>
             <a href="{{ url_for('admin_bp.admin_form', auction_id=auction.id) }}"
                     class="edit-button" aria-label="Edit auction">Edit</a>
